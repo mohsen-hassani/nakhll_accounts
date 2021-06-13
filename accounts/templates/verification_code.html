@@ -1,0 +1,47 @@
+<div class="form-box">
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="input-icon">
+                <i class="fa fa-key"></i>
+            </div>
+            <div class="input-container">
+                <input type="number" name="verification_code" placeholder="کد تایید را  وارد کنید"
+                    required="" id="id_verification_code">
+            </div>
+            <br>
+            <div class="button-box">
+                <button type="submit">بررسی کد فعال سازی</button>
+            </div>
+        </form>
+        <div class="resend-code">
+            <button  class="resend-code" id="resendCode" onclick="location.reload()" disabled href="#">ارسال مجدد کد یکبار
+                مصرف</button>
+            <p class="code-hint">کد فعال سازی را می‌توانید در کنسول جنگو پیدا کنید</p>
+        </div>
+
+    </div>
+    <div class="panel-footer">
+        <span> شماره {{phone}} اشتباه است؟
+            <a href="{% url 'accounts_get_phone' %}" class="primary-link">تغییر شماره
+                همراه</a>
+        </span>
+    </div>
+</div>
+<script>
+    var countDownDate = new Date("{{expire_datetime|date:'c'}}").getTime();
+    var x = setInterval(function() {
+        var now = new Date().getTime();
+        var distance = countDownDate - now;
+        // Time calculations for days, hours, minutes and seconds
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        var countDown = minutes + " دقیقه و " + seconds + " ثانیه "
+        document.getElementById("resendCode").innerHTML = `ارسال مجدد کد در ${countDown} دیگر`;
+    if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("resendCode").innerHTML = "ارسال مجدد کد";
+        document.getElementById("resendCode").disabled = false;
+    }
+    }, 1000);
+</script>

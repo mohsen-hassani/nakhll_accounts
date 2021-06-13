@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block container %}
+<form method="POST" id="register">
+    <div class="panel-content">
+        {% csrf_token %}
+        <div class="input-box">
+            <div class="input-icon">
+                <i class="fa fa-phone"></i>
+            </div>
+            <div class="input-container">
+                <input type="number" name="phone_number" placeholder="شماره همراه خود را وارد کنید"
+                    pattern="09[0-9]{9}" required id="id_phone_number">
+            </div>
+        </div>
+        <div class="button-box">
+            <button type="submit">ادامه</button>
+        </div>
+    </div>
+</form>
+{% endblock container %}
