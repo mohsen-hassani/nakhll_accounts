@@ -30,7 +30,12 @@ def get_phone(request):
                 return redirect('accounts_password') if profile.user.password else redirect('accounts_login_by_code')
             else:
                 return redirect('accounts_register')
-    return render(request, GET_PHONE)
+    else:
+        form = GetPhoneForm()
+    data = {
+        'form': form
+    }
+    return render(request, GET_PHONE, data)
 
 def register(request):
     '''Register verified user with phone number '''

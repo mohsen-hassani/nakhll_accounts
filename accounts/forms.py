@@ -5,6 +5,12 @@ from accounts.models import VerificationCode
 
 class GetPhoneForm(forms.Form):
     phone_number = forms.IntegerField(widget=forms.NumberInput)
+    def clean(self):
+        cleaned_data = super().clean()
+        phone = cleaned_data.get('phone_number')
+        if phone < 900_000_0000 or phone > 999_999_9999:
+            raise ValidationError(_('شماره تماس وارد شده اشتباه است'))
+
 
 class CodeVerificationForm(forms.ModelForm):
     class Meta:
