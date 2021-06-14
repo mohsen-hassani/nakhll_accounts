@@ -19,7 +19,8 @@
         <div class="row">
             <div class="col-xl-12">
                 <div class="panel success-panel">
-                    شما با شماره {{request.user.username}} با موفقیت وارد شدید
+                    شما با شماره {{request.user.username}} با موفقیت وارد شدید <br/>
+                    <a href="{% url 'accounts_change_password' %}" style="text-decoration: underline; color: wheat">تغییر رمز ورود</a> / 
                     <a href="{% url 'accounts_logout' %}" style="text-decoration: underline; color: wheat">خروج</a>
                 </div>
             </div>

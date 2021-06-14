@@ -15,8 +15,9 @@ class PasswordForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 class SetPasswordForm(forms.Form):
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+    old_password = forms.CharField(widget=forms.PasswordInput)
+    new_password1 = forms.CharField(widget=forms.PasswordInput)
+    new_password2 = forms.CharField(widget=forms.PasswordInput)
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')

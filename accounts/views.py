@@ -5,7 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from accounts.models import VerificationCode, Profile
 from accounts.forms import GetPhoneForm, CodeVerificationForm, PasswordForm
-from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
+from django.contrib.auth import update_session_auth_hash
+
 
 # Create your views here.
 
@@ -14,6 +16,7 @@ REGISTER = 'register.html'
 LOGIN_CODE = 'login_code.html'
 PASSWORD = 'password.html'
 SET_PASSWORD = 'set_password.html'
+CHANGE_PASSWORD = 'change_password.html'
 
 def get_phone(request):
     '''Get phone number, register if not exist and login for already exist phones'''
@@ -22,8 +25,11 @@ def get_phone(request):
         if form.is_valid():
             phone = form.cleaned_data.get('phone_number')
             request.session['phone'] = phone
-            user = Profile.objects.filter(phone_number=phone).first()
-            return redirect('accounts_password') if user else redirect('accounts_register')
+            profile = Profile.objects.filter(phone_number=phone).first()
+            if profile:
+                return redirect('accounts_password') if profile.user.password else redirect('accounts_login_by_code')
+            else:
+                return redirect('accounts_register')
     return render(request, GET_PHONE)
 
 def register(request):
@@ -42,10 +48,10 @@ def register(request):
             code = form.cleaned_data.get('verification_code')
             verified = VerificationCode.verificaiton.verify_code(phone, code)
             if verified:
-                # create user and redirect to set password page
+                # Create and login user to dashboard
                 user = User.objects.create(username=phone)
-                request.session['set_password'] = True
-                return redirect('accounts_set_password')
+                login(request, user)
+                return redirect('accounts_dashboard')
             else:
                 form.add_error(None, _('کد تایید شما اشتباه است یا زمان آن منقضی شده است'))
     else:
@@ -62,10 +68,10 @@ def register(request):
 def forget_password(request):
     '''Validate user phone number and redirect to set password'''
     phone = request.session.get('phone')
-    if not phone: # User directly enter login url and no phone entered
+    if not phone: # User directly enter this url and no phone entered
         return redirect('accounts_get_phone')
-    user = Profile.objects.filter(phone_number=phone).first()
-    if not user: # This user not exists, so redirect to register page
+    profile = Profile.objects.filter(phone_number=phone).first()
+    if not profile: # This user not exists, so redirect to register page
         return redirect('accounts_register')
 
     if request.method == 'POST':
@@ -74,8 +80,10 @@ def forget_password(request):
             code = form.cleaned_data.get('verification_code')
             verified = VerificationCode.verificaiton.verify_code(phone, code)
             if verified:
-                # Redirect to account set password
-                request.session['set_password'] = True
+                # Login user, clear last password and redirect to set new password
+                profile.user.password = ''
+                profile.user.save()
+                login(request, profile.user)
                 return redirect('accounts_set_password')
             else:
                 form.add_error(None, _('کد تایید شما اشتباه است یا زمان آن منقضی شده است'))
@@ -91,42 +99,58 @@ def forget_password(request):
     return render(request, LOGIN_CODE, data)
 
 
-def set_password(request):
-    '''Set password for newly created uesrs and users whom forgot their password '''
-    phone = request.session.get('phone')
-    if not phone: # User directly enter login url and no phone entered
-        return redirect('accounts_get_phone')
-    profile = Profile.objects.filter(phone_number=phone).first()
-    if not profile: # This user not exists, so redirect to register page
-        return redirect('accounts_register')
-    if not request.session.get('set_password'): # User not redirected from a valid page
-        return redirect('accounts_get_phone')
+@login_required
+def change_password(request):
+    '''Change password for logged in uesrs '''
+    user = request.user
+    if not user.password: # User not set password yet, redirect to set password form
+        return redirect('accounts_set_password')
     
     if request.method == 'POST':
-        form = SetPasswordForm(user=profile.user, data=request.POST)
+        form = PasswordChangeForm(user=user, data=request.POST)
         if form.is_valid():
-            form.save()
-            login(request, profile.user)
+            user = form.save()
+            update_session_auth_hash(request, user)
             return redirect('accounts_dashboard')
     else:
-        form = SetPasswordForm(user=profile.user)
+        form = PasswordChangeForm(user=user)
     data = {
         'form': form,
-        'phone': phone,
+    }
+    return render(request, CHANGE_PASSWORD, data)
+
+
+
+@login_required
+def set_password(request):
+    '''Set password for logged in uesrs '''
+    user = request.user
+    if user.password: # User already set password, so redirect to change password form
+        return redirect('accounts_change_password')
+    
+    if request.method == 'POST':
+        form = SetPasswordForm(user=user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            return redirect('accounts_dashboard')
+    else:
+        form = SetPasswordForm(user=user)
+    data = {
+        'form': form,
     }
     return render(request, SET_PASSWORD, data)
 
 def password(request):
     '''Authenticate user with phone as username and password '''
     phone = request.session.get('phone')
-    if not phone: # User directly enter login url and no phone entered
+    if not phone: # User directly enter this url and no phone entered
         return redirect('accounts_get_phone')
     profile = Profile.objects.filter(phone_number=phone).first()
     if not profile: # This user not exists, so redirect to register page
         return redirect('accounts_register')
-    if not profile.user.password: # User not set password yet, redirect to set password
-        request.session['set_password'] = True
-        return redirect('accounts_set_password')
+    if not profile.user.password: # User not set password yet, redirect to login by code
+        return redirect('accounts_login_by_code')
 
     if request.method == 'POST':
         form = PasswordForm(request.POST)
@@ -146,6 +170,37 @@ def password(request):
     }
     return render(request, PASSWORD, data)
 
+
+def login_by_code(request):
+    '''Send a code to user phone and verify to login '''
+    phone = request.session.get('phone')
+    if not phone: # User directly enter this url and no phone entered
+        return redirect('accounts_get_phone')
+    profile = Profile.objects.filter(phone_number=phone).first()
+    if not profile: # This user not exists, so redirect to register page
+        return redirect('accounts_register')
+
+    if request.method == 'POST':
+        form = CodeVerificationForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data.get('verification_code')
+            verified = VerificationCode.verificaiton.verify_code(phone, code)
+            if verified:
+                # Login user
+                login(request, profile.user)
+                return redirect('accounts_dashboard')
+            else:
+                form.add_error(None, _('کد تایید شما اشتباه است یا زمان آن منقضی شده است'))
+    else:
+        form = CodeVerificationForm()
+    code, expire_datetime = VerificationCode.verificaiton.generate_verification_code(phone)
+    data = {
+        'phone': phone,
+        'code': code,
+        'expire_datetime': expire_datetime,
+        'form': form,
+    }
+    return render(request, LOGIN_CODE, data)
 
 
 @login_required

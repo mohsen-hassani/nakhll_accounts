@@ -2,19 +2,21 @@
     <div class="form-container">
         <form method="POST">
             {% csrf_token %}
-            <div class="input-icon">
-                <i class="fa fa-key"></i>
-            </div>
-            <div class="input-container">
-                <input type="number" name="verification_code" placeholder="کد تایید را  وارد کنید"
-                    required="" id="id_verification_code">
+            <div class="input-box">
+                <div class="input-icon">
+                    <i class="fa fa-key"></i>
+                </div>
+                <div class="input-container">
+                    <input type="number" name="verification_code" placeholder="کد تایید را  وارد کنید"
+                        required="" id="id_verification_code">
+                </div>
             </div>
             <br>
             <div class="button-box">
                 <button type="submit">بررسی کد فعال سازی</button>
             </div>
         </form>
-        <div class="resend-code">
+        <div class="button-box">
             <button  class="resend-code" id="resendCode" onclick="location.reload()" disabled href="#">ارسال مجدد کد یکبار
                 مصرف</button>
             <p class="code-hint">کد فعال سازی را می‌توانید در کنسول جنگو پیدا کنید</p>

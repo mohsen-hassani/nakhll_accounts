@@ -16,6 +16,12 @@ body {
     margin-top: 0;
 }
 
+input, button {
+    font-family: IRANSans, sans-serif, tahoma;
+}
+form {
+    margin: 10px 0px;
+}
 .panel {
     border-radius: 10px;
     box-shadow: 0 0 35px 0 rgb(0 0 0 / 24%);
@@ -55,20 +61,29 @@ body {
 .input-container {
     float:right;
     width: 90%;
+    padding: 0px 10px;
 }
 input[type='text'], input[type='number'], input[type='password'] {
     overflow: visible;
     background: #fff;
     box-shadow: none;
     border: 0;
-    margin: 7px;
     border-bottom: 2px solid #f0f0f7;
-    padding: 5px;
+    padding: 5px 0px;
     width: 100%;
     font-size: 15px;
+
 }
+
+input[type='text']:focus, input[type='number']:focus, input[type='password']:focus {
+    outline: none; 
+}
+
+
+
 .button-box {
-    padding: 5px 0 30px;
+    padding:  0px;
+    margin: 10px 0px;
 }
 button {
     background: #3b86ff;
@@ -107,22 +122,22 @@ button:hover {
     background: none;
     color: darkslategray;
     font-size: small;
-    margin-right: 0;
-    padding-bottom: 0px;
+    margin: 0;
+    padding: 0px;
 }
 
 .code-hint {
     color: indianred;
     font-size: small;
-    margin-top: 0px;
+    margin: 0px;
 }
 
 .panel-footer {
-    padding-top: 0;
+    padding-top: 30px;
     text-align: center;
     font-size: 15px;
-    margin: 0 23px;
     padding-bottom: 30px;
+    width: 100%;
 }
 
 .primary-link {
