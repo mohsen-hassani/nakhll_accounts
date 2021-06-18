@@ -1,0 +1,33 @@
+<header>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header pull-right">
+                <ul class="nav navbar-nav">
+                    <li{% if '/add-market/' in request.path %} class="active" {% endif %}>
+                        <a href="{% url 'add_market' %}">ایجاد حجره</a>
+                        </li>
+                        <li{% if '/markets/all/' in request.path %} class="active" {% endif %}>
+                            <a href="{% url 'all_markets' %}">همه حجره‌ها</a>
+                            </li>
+                            <li{% if 'dashboard/' in request.path %} class="active" {% endif %}>
+                                <a href="{% url 'accounts_dashboard' %}">حجره‌های من</a>
+                                </li>
+                </ul>
+                <a class="navbar-brand">بازار نخل</a>
+            </div>
+            <div class="collapse navbar-collapse" id="main-menu">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="{% url 'accounts_logout' %}">خروج</a>
+                    </li>
+                    <li{% if '/password/' in request.path %} class="active" {% endif %}>
+                        <a href="{% url 'accounts_change_password' %}">تغییر رمز</a>
+                        </li>
+                        <li>
+                            <a>{{request.user.username}} خوش آمدید!</a>
+                        </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

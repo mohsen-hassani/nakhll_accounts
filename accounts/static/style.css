@@ -22,6 +22,10 @@ input, button {
 form {
     margin: 10px 0px;
 }
+.clear {
+    clear: both;
+}
+
 .panel {
     border-radius: 10px;
     box-shadow: 0 0 35px 0 rgb(0 0 0 / 24%);
@@ -63,7 +67,7 @@ form {
     width: 90%;
     padding: 0px 10px;
 }
-input[type='text'], input[type='number'], input[type='password'] {
+input[type='text'], input[type='number'], input[type='password'], select {
     overflow: visible;
     background: #fff;
     box-shadow: none;
@@ -75,7 +79,7 @@ input[type='text'], input[type='number'], input[type='password'] {
 
 }
 
-input[type='text']:focus, input[type='number']:focus, input[type='password']:focus {
+input[type='text']:focus, input[type='number']:focus, input[type='password']:focus, select:focus {
     outline: none; 
 }
 
@@ -138,6 +142,8 @@ button:hover {
     font-size: 15px;
     padding-bottom: 30px;
     width: 100%;
+    background: none;
+    border: none;
 }
 
 .primary-link {
@@ -156,3 +162,32 @@ button:hover {
     border-radius: 10px;
     border: 1px solid darkgreen;
 }
+
+.simple-form {
+    width: 500px;
+    margin: 0px auto;
+}
+
+.simple-form input, select {
+    border: 1px solid lightgray;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px 0px;
+}
+
+.errorlist {
+    color: red
+}
+
+.thumbnail {
+   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+   transition: 0.3s;
+   min-width: 40%;
+   padding: 20px;
+   border-radius: 15px;
+ }
+
+
+ .thumbnail .action {
+     padding-top: 20px
+ }

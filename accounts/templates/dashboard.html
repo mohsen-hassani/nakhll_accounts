@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +8,36 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="language" content="Persion">
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
-    <script src="https://kit.fontawesome.com/e9b9726b50.js" crossorigin="anonymous"></script>
     <title>بازار نخل</title>
 </head>
 
 <body>
+
+    {% include 'header.html' %}
+
     <div class="container">
         <div class="row">
             <div class="col-xl-12">
-                <div class="panel success-panel">
-                    شما با شماره {{request.user.username}} با موفقیت وارد شدید <br/>
-                    <a href="{% url 'accounts_change_password' %}" style="text-decoration: underline; color: wheat">تغییر رمز ورود</a> / 
-                    <a href="{% url 'accounts_logout' %}" style="text-decoration: underline; color: wheat">خروج</a>
+                <h2>حجره‌های من</h2>
+                <br>
+                {% for market in request.user.markets.all %}
+                <div class="col-md-6 pull-right">
+                    <div class="thumbnail">
+                        <div class="caption pull-right">
+                            <h4>{{market.name}}</h4>
+                            <small>{{market.get_status_display}}</small>
+                        </div>
+                        <div class="pull-left action">
+                            <a href="{% url 'view_market' market.name %}">مشاهده</a>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
                 </div>
+                {% endfor %}
+
             </div>
         </div>
     </div>

@@ -21,5 +21,6 @@ from django.views.generic.base import RedirectView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
+    path('markets/', include('market.urls')),
     path('', RedirectView.as_view(url=reverse_lazy('accounts_get_phone'))),
 ]
