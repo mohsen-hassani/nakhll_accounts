@@ -27,13 +27,13 @@
                 <div class="col-md-6 pull-right">
                     <div class="thumbnail">
                         <div class="caption pull-right">
-                            <h4>{{market.name}}</h4>
+                            <h4>{{market.name}}<small> دارای {{market.products.all|length}} محصول</small></h4>
                             <small>{{market.user.username}}</small>
                         </div>
                         <div class="pull-left action">
                             <a href="{% url 'view_market' market.name %}">مشاهده</a>
                             {%if request.user.is_staff%} \ <a href="{% url 'close_market' market.id %}"
-                                style="color: indianred">بستن</a>{%endif%}
+                                style="color: indianred">لغو انتشار و انتقال</a>{%endif%}
                         </div>
                         <div class="clear"></div>
                     </div>

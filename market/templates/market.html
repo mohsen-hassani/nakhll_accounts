@@ -19,11 +19,34 @@
     {% include 'header.html' %}
 
     <div class="container">
-        <div class="container">
-            <div class="jumbotron">
-                <h1>{{market.name}}</h1>
-                <p>به حجره {{market.name}} خوش آمدید!</p>
-                <p>این حجره متعلق به {{market.user.username}} می‌باشد</p>
+        <div class="jumbotron">
+            <h1>{{market.name}}</h1>
+            <p>به حجره {{market.name}} خوش آمدید!</p>
+            <p>این حجره متعلق به {{market.user.username}} می‌باشد</p>
         </div>
-    </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <h2>محصولات حجره</h2>
+                <small><a href="{% url 'add_product' market %}">افزودن محصول جدید</a></small>
+                <br>
+                <br>
+                {% for product in market.products.all %}
+                <div class="col-md-4 pull-right">
+                    <div class="thumbnail">
+                        <div class="caption pull-right">
+                            <h4>{{product.name}}</h4>
+                            <small>{{product.desc}}</small> - 
+                            <small>{{product.get_status_display}}</small>
+                        </div>
+                        <div class="pull-left action">
+                            <a href="{% url 'view_product' market.name product.name %}">مشاهده</a>
+                            {%if request.user.is_staff%} \ <a href="{% url 'close_product' product.id %}"
+                                style="color: indianred">لغو انتشار و انتقال</a>{%endif%}
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
 </body>

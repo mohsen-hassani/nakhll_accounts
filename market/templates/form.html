@@ -26,9 +26,10 @@
                 <button type="submit">ارسال</button>
             </form>
         </div>
-
-
     </div>
+    {% if extra_script_file %}
+    <script src="{% static extra_script_file %}"></script>
+    {% endif %}
 </body>
 
 </html>
